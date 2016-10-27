@@ -1,4 +1,4 @@
-@require "github.com/jkroso/Promises.jl" Future assign needed
+@require "github.com/jkroso/Promises.jl" Future needed
 
 abstract Stream
 
@@ -25,12 +25,12 @@ Port() = Port(Future{Stream}())
 Base.start(p::Port) = p.cursor
 Base.next(::Port, f::Future) = (s = wait(f); (s.head, s.tail))
 Base.done(::Port, f::Future) = wait(f) ≡ EOS
-Base.close(p::Port) = assign(p.cursor, EOS)
+Base.close(p::Port) = put!(p.cursor, EOS)
 Base.isopen(p::Port) = p.cursor.state <= needed
 
 Base.put!(p::Port, value::Any) = begin
   rest = Future{Stream}()
-  assign(p.cursor, StreamNode(value, rest))
+  put!(p.cursor, StreamNode(value, rest))
   p.cursor = rest
   p
 end
