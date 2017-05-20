@@ -1,13 +1,13 @@
 @require "github.com/jkroso/Promises.jl" Future needed
 
-abstract Stream
+abstract type Stream end
 
-immutable StreamNode <: Stream
+struct StreamNode <: Stream
   head::Any
   tail::Any
 end
 
-immutable EndOfStream <: Stream end
+struct EndOfStream <: Stream end
 
 const EOS = EndOfStream()
 
@@ -16,7 +16,7 @@ const EOS = EndOfStream()
 using infinite memory. It does this by droping the head of the stream
 every time a new value is added
 """
-type Port
+mutable struct Port
   cursor::Future{Stream}
 end
 
