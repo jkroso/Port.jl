@@ -22,9 +22,15 @@ end
 
 Port() = Port(Future{Stream}())
 
-Base.start(p::Port) = p.cursor
-Base.next(::Port, f::Future) = (s = wait(f); (s.head, s.tail))
-Base.done(::Port, f::Future) = wait(f) ≡ EOS
+Base.iterate(p::Port) = begin
+  s = wait(p.cursor)
+  s == EOS ? nothing : (s.head, s.tail)
+end
+Base.iterate(::Any, f::Future) = begin
+  s = wait(f)
+  s == EOS ? nothing : (s.head, s.tail)
+end
+
 Base.close(p::Port) = put!(p.cursor, EOS)
 Base.isopen(p::Port) = p.cursor.state <= needed
 

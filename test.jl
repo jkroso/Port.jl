@@ -1,4 +1,5 @@
 @require "." Port
+using Distributed
 
 port = Port()
 r = @spawn take!(port)
